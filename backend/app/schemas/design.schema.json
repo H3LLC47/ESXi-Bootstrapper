@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "vSphere Bootstrap Design",
+  "type": "object",
+  "required": [
+    "metadata",
+    "vcenter",
+    "datacenter",
+    "cluster",
+    "distributedSwitch",
+    "networking",
+    "hosts"
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["schemaVersion", "designName"],
+      "properties": {
+        "schemaVersion": { "type": "string" },
+        "designName": { "type": "string", "minLength": 1 }
+      }
+    },
+    "vcenter": {
+      "type": "object",
+      "required": ["server"],
+      "properties": {
+        "server": { "type": "string", "minLength": 1 }
+      }
+    },
+    "datacenter": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cluster": {
+      "type": "object",
+      "required": ["name", "haEnabled", "drsEnabled"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "haEnabled": { "type": "boolean" },
+        "drsEnabled": { "type": "boolean" }
+      }
+    },
+    "distributedSwitch": {
+      "type": "object",
+      "required": ["name", "mtu", "uplinks"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string" },
+        "mtu": { "type": "integer", "minimum": 1500, "maximum": 9000 },
+        "uplinks": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "networking": {
+      "type": "object",
+      "required": ["vmkernelPortgroups", "guestPortgroups", "storagePolicy"],
+      "properties": {
+        "vmkernelPortgroups": {
+          "type": "object",
+          "required": ["management", "vmotion", "storageA", "storageB"],
+          "properties": {
+            "management": { "$ref": "#/$defs/trafficPortgroup" },
+            "vmotion": { "$ref": "#/$defs/trafficPortgroup" },
+            "storageA": { "$ref": "#/$defs/storagePortgroup" },
+            "storageB": { "$ref": "#/$defs/storagePortgroup" }
+          }
+        },
+        "guestPortgroups": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/guestPortgroup" }
+        },
+        "storagePolicy": {
+          "type": "object",
+          "required": ["allowSharedPreferredUplink"],
+          "properties": {
+            "allowSharedPreferredUplink": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "hosts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/host" }
+    }
+  },
+  "$defs": {
+    "trafficPortgroup": {
+      "type": "object",
+      "required": ["portgroupName", "vlanId", "activeUplinks"],
+      "properties": {
+        "portgroupName": { "type": "string", "minLength": 1 },
+        "vlanId": { "type": "integer", "minimum": 1, "maximum": 4094 },
+        "activeUplinks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "storagePortgroup": {
+      "type": "object",
+      "required": ["portgroupName", "vlanId", "preferredUplink", "secondaryUplink"],
+      "properties": {
+        "portgroupName": { "type": "string", "minLength": 1 },
+        "vlanId": { "type": "integer", "minimum": 1, "maximum": 4094 },
+        "preferredUplink": { "type": "string", "minLength": 1 },
+        "secondaryUplink": { "type": "string", "minLength": 1 }
+      }
+    },
+    "guestPortgroup": {
+      "type": "object",
+      "required": ["name", "vlanId", "activeUplinks"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "vlanId": { "type": "integer", "minimum": 1, "maximum": 4094 },
+        "activeUplinks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "vmkernelAddress": {
+      "type": "object",
+      "required": ["portgroupKey", "ip", "subnetMask"],
+      "properties": {
+        "portgroupKey": {
+          "type": "string",
+          "enum": ["management", "vmotion", "storageA", "storageB"]
+        },
+        "ip": { "type": "string", "minLength": 1 },
+        "subnetMask": { "type": "string", "minLength": 1 }
+      }
+    },
+    "managementVmk": {
+      "type": "object",
+      "required": ["portgroupKey", "ip", "subnetMask", "gateway"],
+      "properties": {
+        "portgroupKey": {
+          "type": "string",
+          "enum": ["management"]
+        },
+        "ip": { "type": "string", "minLength": 1 },
+        "subnetMask": { "type": "string", "minLength": 1 },
+        "gateway": { "type": "string", "minLength": 1 }
+      }
+    },
+    "host": {
+      "type": "object",
+      "required": ["name", "address", "physicalNics", "uplinkMapping", "vmkernelAdapters"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "address": { "type": "string", "minLength": 1 },
+        "physicalNics": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "uplinkMapping": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "vmkernelAdapters": {
+          "type": "object",
+          "required": ["management", "vmotion", "storageA", "storageB"],
+          "properties": {
+            "management": { "$ref": "#/$defs/managementVmk" },
+            "vmotion": { "$ref": "#/$defs/vmkernelAddress" },
+            "storageA": { "$ref": "#/$defs/vmkernelAddress" },
+            "storageB": { "$ref": "#/$defs/vmkernelAddress" }
+          }
+        }
+      }
+    }
+  }
+}
+
