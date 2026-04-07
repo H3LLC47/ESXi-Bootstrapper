@@ -63,7 +63,6 @@ Storage is handled as a special case with exactly two storage VLANs and exactly 
 
 ## JSON contract
 
-The frontend and backend exchange a single JSON design document. The formal JSON Schema lives at [backend/app/schemas/design.schema.json](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/schemas/design.schema.json), and a sample payload lives at [examples/sample-design.json](/Users/oworkman/Documents/ESXi Bootstrapper/examples/sample-design.json).
 
 Top-level sections:
 
@@ -93,11 +92,6 @@ Tech stack:
 
 Main backend files:
 
-- [backend/app/main.py](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/main.py)
-- [backend/app/api/routes/design.py](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/api/routes/design.py)
-- [backend/app/services/validation.py](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/services/validation.py)
-- [backend/app/services/planner.py](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/services/planner.py)
-- [backend/app/services/powercli.py](/Users/oworkman/Documents/ESXi Bootstrapper/backend/app/services/powercli.py)
 
 API endpoints:
 
@@ -126,15 +120,6 @@ Tech stack:
 - TypeScript
 - Vite
 
-Main frontend files:
-
-- [frontend/src/App.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/App.tsx)
-- [frontend/src/pages/WizardPage.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/pages/WizardPage.tsx)
-- [frontend/src/pages/ResultsPage.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/pages/ResultsPage.tsx)
-- [frontend/src/steps/NetworkStep.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/steps/NetworkStep.tsx)
-- [frontend/src/steps/StorageStep.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/steps/StorageStep.tsx)
-- [frontend/src/steps/GuestNetworksStep.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/steps/GuestNetworksStep.tsx)
-- [frontend/src/steps/HostsStep.tsx](/Users/oworkman/Documents/ESXi Bootstrapper/frontend/src/steps/HostsStep.tsx)
 
 Wizard flow:
 
@@ -186,10 +171,7 @@ export VITE_API_BASE="http://localhost:8000/api"
 5. Generate the output.
 6. Copy the generated PowerCLI from the results page into your operational process after review.
 
-## Sample output
 
-- Sample design: [examples/sample-design.json](/Users/oworkman/Documents/ESXi Bootstrapper/examples/sample-design.json)
-- Sample PowerCLI: [examples/sample-powercli.ps1](/Users/oworkman/Documents/ESXi Bootstrapper/examples/sample-powercli.ps1)
 
 ## Assumptions
 
